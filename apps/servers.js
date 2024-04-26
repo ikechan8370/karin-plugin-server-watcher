@@ -1,7 +1,7 @@
-import {Bot, plugin, segment} from '#Karin'
+import { plugin, segment } from '#Karin'
 import Cfg from '../lib/config.js'
-import {NezhaClient} from "../models/nezha.js";
-import common from "../../../lib/common/common.js";
+import { NezhaClient } from '../models/nezha.js'
+import common from '../../../lib/common/common.js'
 
 export class Servers extends plugin {
   constructor () {
@@ -40,5 +40,4 @@ export class Servers extends plugin {
     let nodes = common.makeForward([msg, ...serverMsgs])
     this.reply(nodes)
   }
-
 }

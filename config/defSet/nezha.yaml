@@ -1,2 +1,52 @@
 endpoint:
 token:
+
+check_rules:
+  # 两次主动检查的间隔时间，单位：秒
+  interval: 60
+  # 检查项的配置
+  items:
+    # CPU检查
+    - name: "cpu"
+      # CPU占用率。高于80%持续600秒
+      threshold: 80
+      last_for : 600
+      # 启用CPU占用的检测为1，关闭为0
+      enable: 1
+    - name: "memory"
+      threshold: 90
+      last_for : 600
+      enable: 1
+    - name: "disk"
+      threshold: 90
+      last_for : 600
+      enable: 1
+    - name: "upload_speed"
+      threshold: 10
+      last_for: 600
+      enable: 1
+    - name : "download_speed"
+      threshold : 10
+      last_for: 600
+      enable: 1
+  # 检查项配置的例外项
+  exception:
+    # 114514是nezha上服务器id
+    114514:
+      - name : "cpu"
+        threshold : 50
+      - name : "memory"
+        threshold : 70
+      - name : "disk"
+        threshold : 90
+        enable : 0
+    1145154:
+      - name : "cpu"
+        enable: 0
+      - name : "memory"
+        enable: 0
+
+
+
+
+

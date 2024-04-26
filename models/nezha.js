@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from 'axios'
 
 /**
  * @typedef {Object} Server
@@ -50,6 +50,10 @@ import axios from 'axios';
  *  UdpConnCount: number,
  *  ProcessCount: number
  *  }} status
+ *  @property {{
+ *    memory_rate: number,
+ *    disk_rate: number,
+ *  }} calculated
  */
 
 /**
@@ -70,7 +74,7 @@ export class NezhaClient {
    * 参数
    * @param {{endpoint: string, token: string}} props
    */
-  constructor(props) {
+  constructor (props) {
     this.endpoint = props.endpoint
     this.token = props.token
   }
@@ -81,7 +85,7 @@ export class NezhaClient {
    * @param {string?} tag
    * @return {Promise<Array<Server>>}
    */
-  async listServers(tag = '') {
+  async listServers (tag = '') {
     let serversRsp = await axios.get(`${this.endpoint}/api/v1/server/list?tag=${tag}`, {
       headers: {
         Authorization: `${this.token}`
@@ -94,10 +98,10 @@ export class NezhaClient {
   /**
    * 获取服务器信息
    *
-   * @param {number} id
-   * @return {Promise<ServerDetail>}
+   * @param {string} id 可以是多个，用应为逗号隔开
+   * @return {Promise<ServerDetail[]>}
    */
-  async getServer(id) {
+  async getServerDetails (id) {
     let serverRsp = await axios.get(`${this.endpoint}/api/v1/server/details?id=${id}`, {
       headers: {
         Authorization: `${this.token}`
