@@ -1,6 +1,7 @@
 endpoint:
 token:
 
+# 服务器检查规则
 check_rules:
   # 两次主动检查的间隔时间，单位：秒
   interval: 60
@@ -46,6 +47,13 @@ check_rules:
       - name : "memory"
         enable: 0
 
+send:
+  12345678:
+    private:
+      - 22222222
+      - 114514
+    group:
+      - 111111
 
 
 

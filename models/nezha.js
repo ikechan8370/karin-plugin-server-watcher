@@ -75,6 +75,12 @@ export class NezhaClient {
    * @param {{endpoint: string, token: string}} props
    */
   constructor (props) {
+    if (!props.endpoint) {
+      throw new Error('未配置nezha面板')
+    }
+    if (!props.token) {
+      throw new Error('未配置nezha面板API令牌')
+    }
     this.endpoint = props.endpoint
     this.token = props.token
   }
