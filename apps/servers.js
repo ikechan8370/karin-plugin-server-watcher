@@ -1,8 +1,9 @@
-import {Bot, plugin, segment} from '#Karin'
+import { Bot, plugin, segment } from '#Karin'
 import Cfg from '../lib/config.js'
 import { NezhaClient } from '../models/nezha.js'
 import common from '../../../lib/common/common.js'
-import {check, TYPE_MAP, TYPES} from '../task/check.js'
+import { check, TYPE_MAP, TYPES } from '../task/check.js'
+import { KarinContact } from '../../../lib/bot/KarinElement.js'
 
 export class Servers extends plugin {
   /**
@@ -66,7 +67,7 @@ export class Servers extends plugin {
           return `服务器id：${server.id}\n服务器名称：${server.name}\n服务器分类：${server.tag}\n上次活跃时间：${server.last_active}\n`
         }).map(msg => segment.text(msg))
       let nodes = common.makeForward([msg, ...serverMsgs])
-      this.reply(nodes)
+      await this.replyForward(nodes)
     } catch (err) {
       logger.error(err)
       this.reply(err.message)
@@ -77,6 +78,7 @@ export class Servers extends plugin {
     let summaries = await check()
     logger.debug(summaries)
     let toSend = '服务器监测汇报\n'
+    let no = true
     summaries.forEach(sum => {
       TYPES.forEach(type => {
         /**
@@ -89,30 +91,25 @@ export class Servers extends plugin {
           } else {
             toSend += `服务器${record.server.name}(${record.server.id}) ${TYPE_MAP[type]}恢复正常，当前值${record.currentValue}\n`
           }
+          no = false
         }
       })
     })
-    let send = Cfg.Nezha.send
-    for (let botId of Object.keys(send)) {
-      let bot = Bot.adapter[botId]
-      if (!bot) {
-        logger.error(`找不到bot ${botId}`)
-        continue
+    if (!no) {
+      let send = Cfg.Nezha.send
+      for (let botId of Object.keys(send)) {
+        let bot = Bot.adapter[botId]
+        if (!bot) {
+          logger.error(`找不到bot ${botId}`)
+          continue
+        }
+        send[botId].private?.forEach(id => {
+          bot.SendMessage(KarinContact.private(id), [segment.text(toSend)])
+        })
+        send[botId].group?.forEach(groupId => {
+          bot.SendMessage(KarinContact.group(groupId), [segment.text(toSend)])
+        })
       }
-      send[botId].private?.forEach(id => {
-        let contact = {
-          scene: 'private',
-          peer: id
-        }
-        bot.SendMessage(contact, [segment.text(toSend)])
-      })
-      send[botId].group?.forEach(groupId => {
-        let contact = {
-          scene: 'group',
-          peer: groupId
-        }
-        bot.SendMessage(contact, [segment.text(toSend)])
-      })
     }
   }
 }
